@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 const Usuario = require('./usuario');
 const Funcionario = require('./funcionario');
 const Empresa = require('./empresa');
-const FuncionarioEmpresa = require('./funcionario_empresa.js');
+const FuncionarioEmpresa = require('./funcionario_empresa');
 
 class Database {
     constructor() {
