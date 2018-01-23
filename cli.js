@@ -46,7 +46,7 @@ node cli.js \
 
 async function execucao(commander) {
     try {
-        const Funcionario = new Funcionario(commander);
+        const employee = new Funcionario(commander);
         //inicializamos a conexão com a base de dados
         //se a base de dados estiver indisponivel 
         //cai no catch e não quebra a aplicação
@@ -81,7 +81,6 @@ async function execucao(commander) {
             process.exit(0);
             return;
         }
-
     }
     catch (e) {
         console.error(e);

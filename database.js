@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 const Usuario = require('./usuario');
 const Funcionario = require('./funcionario');
 const Empresa = require('./empresa');
-const Empresa = require('./funcionario_empresa.js');
+const FuncionarioEmpresa = require('./funcionario_empresa.js');
 
 class Database {
     constructor() {
@@ -32,7 +32,7 @@ class Database {
     }
     async definirModelo() {
         //Tabela Usuario
-        this.UsuarioModel = this.desafioCertificado.define('User', {
+        this.UsuarioModel = this.desafioCertificado.define('Users', {
             ID: {
                 type: Sequelize.INTEGER,
                 primaryKey: true,
@@ -54,7 +54,7 @@ class Database {
             USUARIO_ID: Sequelize.INTEGER,
         });
         //Tabela empresa
-        this.EmpresaModel = this.desafioCertificado.define('Company', {
+        this.EmpresaModel = this.desafioCertificado.define('Companies', {
             ID: {
                 type: Sequelize.INTEGER,
                 primaryKey: true,
@@ -99,7 +99,7 @@ class Database {
         await this.FuncionarioModel.create({
             NOME: 'Rodrigo G.T.M',
             IDADE: '19',
-            USUARIO: 1,
+            USUARIO: '1',
             DATA_NASCIMENTO: '1998-03-11'
         });
 
@@ -117,8 +117,8 @@ class Database {
         });
 
         await this.FuncionarioEmpresaModel.create({
-            FUNCIONARIO_ID: 1,
-            EMPRESA_ID: 1
+            FUNCIONARIO_ID: '1',
+            EMPRESA_ID: '1'
         });
 
     }
@@ -180,9 +180,6 @@ class Database {
         });
         return result.get({ plain: true });
     }
-
-
-
 
     async listarFuncionarios() {
         const result = await this.FuncionarioModel.findAll().map(item => {
