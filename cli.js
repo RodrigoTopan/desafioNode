@@ -32,6 +32,7 @@ async function execucao(commander) {
     try {
         const employee = new Funcionario(commander);
         await database.conectar();
+
         if (commander.remover) {
             await database.remover(employee.id);
             return;
