@@ -1,6 +1,6 @@
 class Empresa {
-    constructor({ ID, nome, cnpj }) {
-        this.ID = ID;
+    constructor({ nome, cnpj }) {
+        //this.ID = ID;
         this.nome = nome;
         this.cnpj = cnpj;
     }

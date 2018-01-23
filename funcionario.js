@@ -1,10 +1,10 @@
 //Duvida em relação a colocar o usuario_id como atributo desse objeto
 class Funcionario {
-    constructor({ ID, nome, idade, dataNascimento, usuario_id }) {
-        this.ID = ID;
+    constructor({ nome, idade, data, usuario_id }) {
+        //this.ID = ID;
         this.nome = nome;
         this.idade = idade;
-        this.dataNascimento = dataNascimento;
+        this.dataNascimento = data;
         this.usuario_id = usuario_id;
     }
 }
