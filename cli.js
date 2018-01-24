@@ -16,7 +16,6 @@ Commander
     .version('v1.0.1')
     //opções funcionário
     .option('-n, --nome [value]', 'Recebe o nome do Funcionário')
-    .option('-p, --poder [value]', 'Recebe o poder do Funcionário')
     .option('-i, --idade [value]', 'Recebe a idade do Funcionário')
     .option('-d, --data [value]', 'Recebe a data de nascimento do Funcionário')
     .option('--usuario [value]', 'Recebe o id de usuario do Funcionário')
