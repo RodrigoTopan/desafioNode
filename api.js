@@ -1,92 +1,12 @@
-// instalamos o Heroku tollbelt, para manipular aplicações Web
-// heroku login - para logar,
-// heroku apps - para ver aplicoes,
-// heroku apps:create nome-do-app
-// heroku apps:delete nome-do-app
-// heroku logs - log da aplicaçÃo
-
-// ---- Publicando aplicação
-// 1o criar o projeto git, git init na pasta
-// caso esquecer de iniar o projeto, precisa linkar a aplicação
-// 2o criar o .gitignore, que são que não versionaremos
-// > .gitignore recebe o node_modules (nunca versione o node_modules)
-// heroku apps:create nome-do-app -> adicionar o endereco do heroku no seu git
-// 3o Criar o Procfile -> arquivo que informa como nossa aplicação será executada
-//executar
-// git-remote -v origin https://github.com/RodrigoTopan/desafioNode
-// 4O git add . && git commit -m "primeiro commit" && git push origin master
-// git add . && git commit -m "primeiro commit" && git push heroku master
-
-
-
-
-
-
-//adicionamos no package.json
-//dois scripts
-// 1 start -> para rodar nonodemon em ambiente dev
-// 2 prod -> para rodar com node_env production
-// 3 preinstall -> para instalar as dependecias globais antes de instalar as dependencias do projeto
-//Se esquecer o Heroku não vai saber que é o pm2
-//
-
-
-//no terminal
-//npm start => start, test são default do npm , então só escrevemos esse comando
-//nom rund prod => prod,prod não é default, então precisamos adicionar o RUN para executar
-
-//instalamos o pm2
-//para gerenciar nossa aplicação
-// precisou escalar (subir 10 novas instancias)
-//precisou verificar quantto está gastande de memoria
-//usa o PM2(nodemon é debug, nodemon é o kct)
-// pm2 start api.js -i 10 --name api-herois
-//instancias
-// pm2 keymetrics => plano pago(mas usar um de gratis)
-// para gerenciar aplicações a partir da web
-// deu excerção -> dispara email sozinho
-// da pra gerenciar memoria, gerenciar disco
-
-
-
-// Para subir instancias de nossas aplicação passamos o -i com a quantiade de instancias
-//pm2 para ambiente de produção
-//npm i -g pm2
-//pm2 start api.js --name api-herois
-// -> listar processos: pm2 list
-// -> monitor api especifica : pm2 monit id (0)
-// -> pm2 dash
-// -> pm2 restart 0
-// -> pm2 stop 0
-// -> pm2 kill = mata todos os processos
-// -> pm2 logs 0 
-
-/* Para adicionar o pm2 em produção
-    precisamos manter a aplicação ativa, pois o servidor pensa que
-    aplicações em segundo plano, não estão rodando
-    para rodar em produção precismaos executar o comando abaixo
-    pm2-docker api.js --name api-herois
-*/
-
-//nodemon para testes
-//instalamos o nodemon npm i -g nodemon para qualquer alteração ele fazer o restart automático
-// para executar nodemon api.js
 // INSTALAMOS O HAPI JS NA VERSAO 15
 // npm i --save hapi@15
 //Hapi é o responsável por cuidar das rotas
 //das nossas apis
 
-
 //instalamos o joi para validar os objetos na requisição
 //npm i --save joi
 
-//Para trabalhar com JWT instalamos dois pacotes 
-//abstração do Hapi para web -> hapi -auth-jwt2
-//json web token -> jsonwebtoken;
 //npm i --save jsonwebtoken hapi-auth-jwt2;
-
-
-
 
 /*
     Toda vez que precisar obter dados GET -> /users
@@ -97,19 +17,13 @@
     
 */
 
-//Para rodar em ambiente de dev
-//nodemon api.js
-//para rodar em prod
-// NODE_ENV=production nodemon api.js
-//npm i --save dotenv
 const { config } = require('dotenv');
 if (process.env.NODE_ENV === 'production') config({ path: 'config/.env.prod' });
 else config({ path: 'config/.env.dev' });
 
 
-
 const Hapi = require('hapi');
-const Database = require('./databaseSQL');
+const Database = require('./database');
 const Joi = require('joi');
 
 /*
@@ -131,7 +45,7 @@ const HapiSwagger = require('hapi-swagger');
     2 informar nas rotas a descrição daquele endpoint(url)
 */
 
-const databaseSQL = new Database();
+const database = new Database();
 
 const USUARIO_VALIDO = {
     username: 'Rodrigo',
@@ -195,135 +109,22 @@ async function registrarRotas() {
             },
             {
                 //definir o caminho da url localhost:3000/heroes
-                path: '/heroes',
+                path: '/employees',
                 //definir o method http
                 method: 'GET',
                 config: {
                     auth: 'jwt',
-                    description: 'Retorna todos os herois do sistema',
-                    notes: 'Retorna herois',
+                    description: 'Retorna todos os funcionários do sistema',
+                    notes: 'Retorna todos os funcionários',
                     tags: ['api'],
                     validate: {
                         headers: Joi.object({
                             authorization: Joi.string().required(),
                         }).unknown(),
                     },
-
-
-                    // O handler é parecido com uma controller
-                    //quando um usuario chamar a url especificada,
-                    //ele é o responsável por retornar informações
                     handler: async (req, reply) => {
                         try {
-                            const result = await databaseSQL.listarHerois();
-                            return reply(result);
-                        } catch (e) {
-                            console.log('deu ruim', e);
-                            return reply('DEU RUIM');
-                        }
-                    }
-                }
-            },
-            {
-
-                path: '/heroes',
-                method: 'POST',
-                config: {
-                    description: 'Rota para cadastrar heróis',
-                    notes: 'Cadastrar herois',
-                    tags: ['api'],
-                    auth: 'jwt',
-                    //criamos uma validação para a requisição
-                    validate: {
-                        //informamos o que queremos validar
-                        // query -> url?nome=123 querystring
-                        //payload -> corpo da requisição
-                        //params /id que vem na url
-                        payload: {
-                            nome: Joi.string()
-                                .max(20)
-                                .min(2)
-                                .required(),
-                            dataNascimento: Joi.date().required(),
-                            poder: Joi.string().required(),
-                            classe: Joi.string().default('warrior').required(),
-                        },
-                        headers: Joi.object({
-                            authorization: Joi.string().required(),
-                        }).unknown(),
-                    },
-                    handler: async (req, reply) => {
-                        try {
-                            //PARA RECEBER OS DADOS VIA CORPO DA REQUISIÇÃO 
-                            // USAMOS O OBJETO PAYLOAD DA REQUISIÇÃO 
-                            const dados = req.payload;
-                            const result = await databaseSQL.cadastrar(dados);
-                            return reply(result);
-                        } catch (e) {
-                            console.log('deu ruim', e);
-                            return reply('DEU RUIM');
-                        }
-                    }
-                }
-            },
-            {
-                path: '/heroes/{id}',
-                method: 'DELETE',
-                config: {
-                    auth: 'jwt',
-                    description: 'Rota para deletar herois por nome',
-                    notes: 'Deleta por nome um heroi',
-                    tags: ['api'],
-                    validate: {
-                        params: {
-                            id: Joi.string().required(),
-                        },
-                        headers: Joi.object({
-                            authorization: Joi.string().required(),
-                        }).unknown(),
-                    },
-                    handler: async (req, reply) => {
-                        try {
-                            const id = req.params.id;
-                            const result = await databaseSQL.remover(id);
-                            return reply(result);
-                        } catch (e) {
-                            console.log('deu ruim', e);
-                            return reply('DEU RUIM');
-                        }
-                    }
-                },
-            },
-            {
-                path: '/heroes/{id}',
-                method: 'PUT',
-                config: {
-                    auth: 'jwt',
-                    description: 'Rota para alterar heróis por nome',
-                    notes: 'Token para alterar registro de herói',
-                    tags: ['api'],
-                    validate: {
-                        params: {
-                            id: Joi.string().required(),
-                        },
-                        payload: {
-                            nome: Joi.string()
-                                .max(20)
-                                .min(2)
-                                .required(),
-                            dataNascimento: Joi.date().required(),
-                            poder: Joi.string().required(),
-                            classe: Joi.string().required()
-                        },
-                        headers: Joi.object({
-                            authorization: Joi.string().required(),
-                        }).unknown(),
-                    },
-                    handler: async (req, reply) => {
-                        try {
-                            const dados = req.payload;
-                            const id = req.params.id;
-                            const result = await databaseSQL.atualizar(id, dados);
+                            const result = await database.listarFuncionarios();
                             return reply(result);
                         } catch (e) {
                             console.log('deu ruim', e);

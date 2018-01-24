@@ -4,14 +4,25 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "preinstall": "npm i -g pm2",
+    "start": "nodemon api.js",
+    "prod": "NODE_ENV=production pm2-docker api.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/vision": "^0.14.0",
     "bluebird": "3.5.1",
     "commander": "2.13.0",
+    "dotenv": "^4.0.0",
+    "hapi": "^15.2.0",
+    "hapi-auth-jwt2": "^7.4.1",
+    "inert": "^4.2.1",
+    "joi": "^13.1.1",
+    "jsonwebtoken": "^8.1.1",
     "nodemon": "1.14.11",
-    "sequelize": "4.32.0"
+    "sequelize": "4.32.0",
+    "vision": "^5.3.1"
   }
 }
